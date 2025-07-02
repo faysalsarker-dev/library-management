@@ -95,7 +95,7 @@ const AddBook = () => {
         <img
           src={libraryImage}
           alt="Add Book Illustration"
-          className="w-full max-w-md md:max-w-2xl rounded-xl shadow-md"
+          className="w-full max-w-md md:max-w-2xl"
         />
       </div>
     </div>

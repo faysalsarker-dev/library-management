@@ -3,9 +3,9 @@ import { Outlet } from "react-router";
 
 const Root = () => {
     return (
-        <div>
+        <div >
             <Navbar/>
-            <Outlet/>
+            <div className="min-h-screen overflow-x-hidden "><Outlet/></div>
         </div>
     );
 };

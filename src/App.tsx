@@ -1,11 +1,16 @@
 
 import './App.css'
-import { Button } from "@/components/ui/button"
+import { GenresSection, HeroSection,BookCardList ,TopBorrowedBooks} from './components/custom'
 function App() {
 
   return (
     <>
- <Button>Click me</Button>
+    <HeroSection/>
+ <div className='max-w-6xl mx-auto px-2'>
+      <GenresSection/>
+   <BookCardList/>
+   <TopBorrowedBooks/>
+ </div>
     </>
   )
 }
