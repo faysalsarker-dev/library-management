@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const bookApi = createApi({
   reducerPath: 'bookApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://assignment-3-tau-dusky.vercel.app/api' }),
   tagTypes: ['Book'],
   endpoints: (builder) => ({
     getBooks: builder.query({
@@ -24,10 +24,11 @@ export const bookApi = createApi({
     updateBook: builder.mutation({
       query: ({ id, ...patch }) => ({
         url: `/books/${id}`,
-        method: 'PATCH',
+        method: 'PUT',
         body: patch,
+               
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Book', id }],
+      invalidatesTags: ['Book']
     }),
     deleteBook: builder.mutation({
       query: (id) => ({

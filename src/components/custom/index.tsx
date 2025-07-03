@@ -6,6 +6,7 @@ import BookCardList from './BookCardList';
 import TopBorrowedBooks from './TopBorrowedBooks';
 import Footer from './Footer';
 import BorrowBookDialog from './BorrowBookDialog';
+import BookFormDialog from './BookFormDialog';
 
 
-export {Navbar , HeroSection , GenresSection ,BookCardList , TopBorrowedBooks ,Footer ,BorrowBookDialog} ;
+export {Navbar , HeroSection , GenresSection ,BookCardList , TopBorrowedBooks ,Footer ,BorrowBookDialog , BookFormDialog} ;
