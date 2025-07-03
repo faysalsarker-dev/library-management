@@ -1,3 +1,4 @@
+import type { IBook } from '@/components/types/types';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const bookApi = createApi({
@@ -5,13 +6,23 @@ export const bookApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: 'https://assignment-3-tau-dusky.vercel.app/api' }),
   tagTypes: ['Book'],
   endpoints: (builder) => ({
-    getBooks: builder.query({
-      query: () => '/books',
-      providesTags: ['Book'],
-    }),
+getBooks: builder.query<{ data: IBook[]; total: number },{ page?: number; limit?: number; search?: string }>({
+  query: ({ page = 1, limit = 10, search = "" } = {}) => {
+    const params = new URLSearchParams();
+
+    params.append("page", String(page));
+    params.append("limit", String(limit));
+
+    if (search) params.append("search", search);
+
+    return `/books?${params.toString()}`;
+  },
+  providesTags: ["Book"],
+}),
+
     getBookById: builder.query({
       query: (id) => `/books/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Book', id }],
+        providesTags: ["Book"]
     }),
     addBook: builder.mutation({
       query: (newBook) => ({

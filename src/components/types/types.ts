@@ -1,6 +1,7 @@
 export type Genre = "FICTION" | "NON_FICTION" | "SCIENCE" | "HISTORY" | "BIOGRAPHY" | "FANTASY";
 
 export interface IBook {
+   _id?: string | undefined;
   title: string;
   author: string;
   genre: Genre;
