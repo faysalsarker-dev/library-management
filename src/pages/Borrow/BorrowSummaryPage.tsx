@@ -13,80 +13,61 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+} from "@/components/ui/pagination";
 
-const borrowSummary = [
-  {
-    totalQuantity: 10,
-    book: {
-      title: "The Theory of Everything",
-      isbn: "9780553380163",
-    },
-  },
-  {
-    totalQuantity: 7,
-    book: {
-      title: "Digital Fortress",
-      isbn: "9780312944926",
-    },
-  },
-  {
-    totalQuantity: 14,
-    book: {
-      title: "Atomic Habits",
-      isbn: "9780735211292",
-    },
-  },
-  {
-    totalQuantity: 5,
-    book: {
-      title: "The Silent Code",
-      isbn: "9781234567890",
-    },
-  },
-];
-
-const totalBorrowed = borrowSummary.reduce(
-  (sum, item) => sum + item.totalQuantity,
-  0
-);
+import { useGetBorrowSummaryQuery } from "@/redux/features/api/borrowApi";
+import { useState } from "react";
 
 const BorrowSummaryPage = () => {
+  const [page, setPage] = useState(1);
+  const limit = 4;
+
+  const { data, isLoading } = useGetBorrowSummaryQuery({ page, limit });
+
+  const borrowSummary = data?.data || [];
+  const pagination = data?.pagination || {
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+  };
+
+  const totalBorrowed = borrowSummary.reduce(
+    (sum, item) => sum + item.totalQuantity,
+    0
+  );
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-14">
-      <Card className="border-none shadow-md bg-background/80 backdrop-blur-sm rounded-2xl">
+      <Card className="bg-white/80 dark:bg-background/70 shadow-xl backdrop-blur-md border border-muted rounded-3xl overflow-hidden">
         <CardHeader className="pb-4 border-b border-muted">
-          <CardTitle className="text-3xl font-bold text-primary">
+          <CardTitle className="text-3xl font-extrabold text-primary tracking-tight flex items-center gap-2">
             📚 Borrow Summary
           </CardTitle>
           <CardDescription className="text-muted-foreground text-sm">
-            Aggregated data of all books borrowed through BookPick.
+            Backend-paginated list of total borrowed books.
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="overflow-x-auto mt-4">
+        <CardContent className="overflow-x-auto">
           <Table>
-            <TableHeader className="bg-muted/50 rounded-md">
+            <TableHeader className="bg-muted/40">
               <TableRow>
-                <TableHead className="text-sm font-semibold text-muted-foreground w-1/2">
-                  Book Title
-                </TableHead>
-                <TableHead className="text-sm font-semibold text-muted-foreground w-1/3">
-                  ISBN
-                </TableHead>
-                <TableHead className="text-sm font-semibold text-muted-foreground text-right">
-                  Total Borrowed
-                </TableHead>
+                <TableHead className="w-1/2">📖 Book Title</TableHead>
+                <TableHead className="w-1/3">🔢 ISBN</TableHead>
+                <TableHead className="text-right">📦 Borrowed</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {borrowSummary.map((item, i) => (
-                <TableRow
-                  key={i}
-                  className="hover:bg-muted/20 transition-colors"
-                >
-                  <TableCell className="font-medium text-base">
-                    {item.book.title}
-                  </TableCell>
+                <TableRow key={i} className="hover:bg-muted/20">
+                  <TableCell>{item.book.title}</TableCell>
                   <TableCell className="text-muted-foreground">
                     {item.book.isbn}
                   </TableCell>
@@ -106,6 +87,52 @@ const BorrowSummaryPage = () => {
               </TableRow>
             </TableBody>
           </Table>
+
+          {/* 🔽 Pagination Component from ShadCN */}
+          {pagination.totalPages > 1 && (
+            <Pagination className="mt-6">
+              <PaginationContent className="justify-end">
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                    className={page === 1 ? "pointer-events-none opacity-50" : ""}
+                  />
+                </PaginationItem>
+
+                {Array.from({ length: pagination.totalPages }).map((_, i) => {
+                  const pageNumber = i + 1;
+                  return (
+                    <PaginationItem key={i}>
+                      <PaginationLink
+                        isActive={pageNumber === page}
+                        onClick={() => setPage(pageNumber)}
+                        href="#"
+                      >
+                        {pageNumber}
+                      </PaginationLink>
+                    </PaginationItem>
+                  );
+                })}
+
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    onClick={() =>
+                      setPage((prev) =>
+                        Math.min(prev + 1, pagination.totalPages)
+                      )
+                    }
+                    className={
+                      page === pagination.totalPages
+                        ? "pointer-events-none opacity-50"
+                        : ""
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          )}
         </CardContent>
       </Card>
     </div>
@@ -113,4 +140,3 @@ const BorrowSummaryPage = () => {
 };
 
 export default BorrowSummaryPage;
- 

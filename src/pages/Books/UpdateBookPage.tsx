@@ -39,10 +39,10 @@ const UpdateBookPage = () => {
     },
   });
   useEffect(() => {
-    if (book.data) {
-      form.reset(book.data);
+    if (book?.data) {
+      form.reset(book?.data);
     }
-  }, [book.data, form]);
+  }, [book?.data, form]);
 
   const onSubmit = async (data: IBook) => {
     try {

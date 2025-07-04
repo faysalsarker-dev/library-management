@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSearchParams , Link} from "react-router";
-import { useGetBooksQuery } from "@/redux/features/api/bookApi";
+import { useDeleteBookMutation, useGetBooksQuery } from "@/redux/features/api/bookApi";
 import {
   Table,
   TableBody,
@@ -40,6 +40,7 @@ const BooksPage = () => {
   const pageParam = Number(searchParams.get("page")) || 1;
   const [page, setPage] = useState(pageParam);
   const limit = 10;
+  const [deleteBook] = useDeleteBookMutation();
 
   const { data, isLoading, isError } = useGetBooksQuery({ page, limit });
   const books = data?.data || [];
@@ -125,7 +126,7 @@ const BooksPage = () => {
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction>Delete</AlertDialogAction>
+                              <AlertDialogAction onClick={() => deleteBook(book?._id)}>Delete</AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
                         </AlertDialog>
