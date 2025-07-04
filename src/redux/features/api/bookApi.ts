@@ -1,52 +1,58 @@
-import type { IBook } from '@/components/types/types';
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import type { IBook } from "@/components/types/types";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const bookApi = createApi({
-  reducerPath: 'bookApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://assignment-3-tau-dusky.vercel.app/api' }),
-  tagTypes: ['Book'],
+  reducerPath: "bookApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: "https://assignment-3-tau-dusky.vercel.app/api",
+  }),
+  tagTypes: ["Book"],
   endpoints: (builder) => ({
-getBooks: builder.query<{ data: IBook[]; total: number },{ page?: number; limit?: number; search?: string }>({
-  query: ({ page = 1, limit = 10, search = "" } = {}) => {
-    const params = new URLSearchParams();
+    getBooks: builder.query<
+      { data: IBook[]; total: number },{ page?: number; limit?: number; filter?: string }>({
+      query: ({ page = 1, limit = 10, filter = "" } = {}) => {
+        const params = new URLSearchParams();
 
-    params.append("page", String(page));
-    params.append("limit", String(limit));
+        params.append("page", String(page));
+        params.append("limit", String(limit));
 
-    if (search) params.append("search", search);
+        if (filter) params.append("filter", filter);
 
-    return `/books?${params.toString()}`;
-  },
-  providesTags: ["Book"],
-}),
-
+        return `/books?${params.toString()}`;
+      },
+      providesTags: ["Book"],
+    }),
+    getBookGroup: builder.query({
+      query: () => `/books/group`,
+      providesTags: ["Book"],
+    }),
     getBookById: builder.query({
       query: (id) => `/books/${id}`,
-        providesTags: ["Book"]
+      providesTags: ["Book"],
     }),
+
     addBook: builder.mutation({
       query: (newBook) => ({
-        url: '/books',
-        method: 'POST',
+        url: "/books",
+        method: "POST",
         body: newBook,
       }),
-      invalidatesTags: ['Book'],
+      invalidatesTags: ["Book"],
     }),
     updateBook: builder.mutation({
       query: ({ id, ...patch }) => ({
         url: `/books/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
-               
       }),
-      invalidatesTags: ['Book']
+      invalidatesTags: ["Book"],
     }),
     deleteBook: builder.mutation({
       query: (id) => ({
         url: `/books/${id}`,
-        method: 'DELETE',
+        method: "DELETE",
       }),
-      invalidatesTags: ['Book'],
+      invalidatesTags: ["Book"],
     }),
   }),
 });
@@ -54,6 +60,7 @@ getBooks: builder.query<{ data: IBook[]; total: number },{ page?: number; limit?
 export const {
   useGetBooksQuery,
   useGetBookByIdQuery,
+  useGetBookGroupQuery,
   useAddBookMutation,
   useUpdateBookMutation,
   useDeleteBookMutation,

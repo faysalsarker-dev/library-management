@@ -10,3 +10,18 @@ export interface IBook {
   copies: number;
   available: boolean;
 }
+
+  export interface IBookGroup {
+  genre: Genre;
+  totalCopies: number;
+}
+
+
+  export interface BorrowedBook  {
+    totalQuantity: number;
+    book: {
+      title: string;
+      isbn: string;
+    };
+  };
+

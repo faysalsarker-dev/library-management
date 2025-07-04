@@ -126,6 +126,7 @@ const BookCardList = () => {
                           initialData={editingBook}
                           mode="edit"
                           isSubmitting={isPending}
+                         
                         />
                       )}
 
@@ -144,8 +145,9 @@ const BookCardList = () => {
                  
   
                         <BorrowBookDialog
-                          bookTitle={book.title}
+                          bookTitle={book?.title}
                           availableCopies={book.copies}
+                          bookId={book._id}
                           trigger={
                             <Button
                               size="icon"

@@ -2,8 +2,27 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 import bgimage from "@/assets/hero.jpg"; 
+import { useState } from "react";
+import { useNavigate } from "react-router";
 
 const HeroSection = () => {
+
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    
+    if (searchQuery) {
+      navigate(`/books?filter=${searchQuery}`);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
   return (
     <section className="relative w-full h-[500px] flex items-center justify-center bg-cover bg-center" style={{ backgroundImage: `url(${bgimage})` }}>
       {/* Overlay */}
@@ -21,10 +40,12 @@ const HeroSection = () => {
         <div className="flex gap-2 w-full max-w-md mx-auto mt-4">
           <Input
             type="text"
+             onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="Search by title, author, or ISBN"
             className="bg-white text-black rounded-full px-4"
           />
-          <Button variant="default" className="rounded-full px-5 bg-[#FCA311] hover:bg-[#e4940f] text-white">
+          <Button  onClick={handleSearch} variant="default" className="rounded-full px-5 bg-[#FCA311] hover:bg-[#e4940f] text-white">
             <Search className="h-5 w-5" />
           </Button>
         </div>

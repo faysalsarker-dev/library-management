@@ -13,6 +13,11 @@ export const borrowApi = createApi({
       }),
       invalidatesTags: ['Borrow', 'Book'],
     }),
+   
+getTopBorrow: builder.query({
+  query: () => '/borrow/top',
+  providesTags: ['Borrow'],
+}),
 
     getBorrowSummary: builder.query({
       query: ({ page = 1, limit = 4 }) => `/borrow?page=${page}&limit=${limit}`,
@@ -21,4 +26,4 @@ export const borrowApi = createApi({
   }),
 });
 
-export const { useBorrowBookMutation, useGetBorrowSummaryQuery } = borrowApi;
+export const { useBorrowBookMutation, useGetBorrowSummaryQuery , useGetTopBorrowQuery} = borrowApi;

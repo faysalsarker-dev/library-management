@@ -33,6 +33,8 @@ import {
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 import type { IBook } from "@/components/types/types";
+import { BorrowBookDialog } from "@/components/custom";
+import { Skeleton } from "@/components/ui/skeleton";
 
 
 const BooksPage = () => {
@@ -40,9 +42,9 @@ const BooksPage = () => {
   const pageParam = Number(searchParams.get("page")) || 1;
   const [page, setPage] = useState(pageParam);
   const limit = 10;
+  const filter = searchParams.get("filter") || "";
   const [deleteBook] = useDeleteBookMutation();
-
-  const { data, isLoading, isError } = useGetBooksQuery({ page, limit });
+  const { data, isLoading, isError } = useGetBooksQuery({ page, limit ,filter});
   const books = data?.data || [];
   const total = data?.total || 0;
   const totalPages = Math.ceil(total / limit);
@@ -58,96 +60,133 @@ const BooksPage = () => {
         📚 All Books
       </h1>
 
-      <div className=" shadow-md overflow-x-auto">
-        {isLoading ? (
-          <div className="flex justify-center items-center h-40">
-            <Loader2 className="animate-spin w-6 h-6 text-muted-foreground" />
-          </div>
-        ) : isError ? (
-          <p className="text-red-500 text-center py-10">❌ Failed to load books.</p>
-        ) : (
-          <Table >
-            <TableHeader className="bg-primary/70 ">
+     
+    <div className="shadow-md overflow-x-auto rounded-xl border bg-white dark:bg-zinc-900">
+      {isLoading ? (
+        <div className="space-y-2 p-4">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="grid grid-cols-7 gap-4 items-center py-2">
+              {[...Array(7)].map((_, j) => (
+                <Skeleton key={j} className="h-4 w-full rounded" />
+              ))}
+            </div>
+          ))}
+        </div>
+      ) : isError ? (
+        <p className="text-red-500 text-center py-10">
+          ❌ Failed to load books.
+        </p>
+      ) : (
+        <Table>
+          <TableHeader className="bg-primary/70 text-white">
+            <TableRow>
+              <TableHead className="p-4 text-white">Title</TableHead>
+              <TableHead className="text-white">Author</TableHead>
+              <TableHead className="text-white">Genre</TableHead>
+              <TableHead className="text-white">ISBN</TableHead>
+              <TableHead className="text-white">Copies</TableHead>
+              <TableHead className="text-white">Status</TableHead>
+              <TableHead className="text-white text-center">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {books.length === 0 ? (
               <TableRow>
-                <TableHead className="p-4">Title</TableHead>
-                <TableHead>Author</TableHead>
-                <TableHead>Genre</TableHead>
-                <TableHead>ISBN</TableHead>
-                <TableHead>Copies</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-center">Actions</TableHead>
+                <TableCell
+                  colSpan={7}
+                  className="text-center py-10 text-muted-foreground"
+                >
+                  No books found.
+                </TableCell>
               </TableRow>
-            </TableHeader>
-            <TableBody>
-              {books.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center py-10 text-muted-foreground">
-                    No books found.
+            ) : (
+              books.map((book: IBook) => (
+                <TableRow
+                  key={book._id}
+                  className="hover:bg-primary/5 transition-colors even:bg-muted/30"
+                >
+                  <TableCell className="font-medium text-sm">
+                    {book.title}
+                  </TableCell>
+                  <TableCell className="text-sm">{book.author}</TableCell>
+                  <TableCell className="text-sm">{book.genre}</TableCell>
+                  <TableCell className="text-sm">{book.isbn}</TableCell>
+                  <TableCell className="text-sm">{book.copies}</TableCell>
+                  <TableCell className="text-sm">
+                    <Badge
+                      variant="outline"
+                      className={
+                        book.available
+                          ? "text-green-600 border-green-400 bg-green-50"
+                          : "text-red-600 border-red-400 bg-red-50"
+                      }
+                    >
+                      {book.available ? "Available" : "Unavailable"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-2 justify-center flex-wrap">
+                      <Link to={`/books/${book._id}`}>
+                        <Button variant="outline" size="icon">
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                      </Link>
+
+                      <Link to={`/edit-book/${book._id}`}>
+                        <Button variant="outline" size="icon">
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                      </Link>
+
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="outline" size="icon">
+                            <Trash2 className="w-4 h-4 text-red-500" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Are you sure you want to delete this book?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => deleteBook(book._id)}
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+
+                      <BorrowBookDialog
+                        bookTitle={book.title}
+                        availableCopies={book.copies}
+                        bookId={book._id}
+                        trigger={
+                          <Button
+                            size="icon"
+                            disabled={!book.available || book.copies === 0}
+                            className="bg-blue-100 hover:bg-blue-200 text-blue-700"
+                          >
+                            <BookOpen className="w-5 h-5" />
+                          </Button>
+                        }
+                      />
+                    </div>
                   </TableCell>
                 </TableRow>
-              ) : (
-                books.map((book: IBook) => (
-                  <TableRow key={book._id} className="hover:bg-primary/5 my-2 transition h-12 bg-gray-200">
-                    <TableCell className="font-medium text-sm">{book.title}</TableCell>
-                    <TableCell className="text-sm">{book.author}</TableCell>
-                    <TableCell className="text-sm">{book.genre}</TableCell>
-                    <TableCell className="text-sm">{book.isbn}</TableCell>
-                    <TableCell className="text-sm">{book.copies}</TableCell>
-                    <TableCell className="text-sm">
-                      <Badge className={book.available ? "text-green-600" : "text-red-500"}>
-                        {book.available ? "Available" : "Unavailable"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2 justify-center">
-                        <Link to={`/books/${book._id}`}>
-                            <Button variant="outline" size="icon">
-                              <Eye className="w-4 h-4" />
-                            </Button>
-                        </Link>
-                     <Link to={`/edit-book/${book._id}`}>
-                            <Button variant="outline" size="icon">
-                              <Pencil className="w-4 h-4" />
-                            </Button>
-                     </Link>
-
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button variant="outline" size="icon">
-                              <Trash2 className="w-4 h-4 text-red-500" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>
-                                Are you sure you want to delete this book?
-                              </AlertDialogTitle>
-                              <AlertDialogDescription>This action is irreversible.</AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => deleteBook(book?._id)}>Delete</AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-
-                        <Button
-                          variant="secondary"
-                          size="icon"
-                          disabled={!book.available || book.copies === 0}
-                          className="disabled:cursor-not-allowed"
-                        >
-                          <BookOpen className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        )}
-      </div>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      )}
+    </div>
 
       <div className="mt-6 flex justify-center">
    <Pagination>

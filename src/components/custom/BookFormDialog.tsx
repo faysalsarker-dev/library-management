@@ -91,15 +91,11 @@ const BookFormDialog: React.FC<BookFormDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      {/* If a trigger is passed, render that else a default button */}
+      
       {trigger ? (
         <DialogTrigger asChild>{trigger}</DialogTrigger>
       ) : (
-        <DialogTrigger asChild>
-          <Button className="bg-primary text-white rounded-full px-6 py-2 hover:bg-primary/90 transition">
-            {mode === "create" ? "➕ Add New Book" : "✏️ Edit Book"}
-          </Button>
-        </DialogTrigger>
+      null
       )}
 
       <DialogContent className="max-w-xl rounded-xl shadow-lg">

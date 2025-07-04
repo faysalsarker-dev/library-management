@@ -1,7 +1,7 @@
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
-import { Link } from "react-router"; 
+import { Link, NavLink } from "react-router"; 
 
 const Navbar = () => {
   const navLinks = [
@@ -20,13 +20,18 @@ const Navbar = () => {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex gap-6">
           {navLinks.map((link) => (
-            <Link
-              key={link.path}
-              to={link.path}
-              className="text-sm font-medium text-muted-foreground hover:text-primary transition"
-            >
-              {link.name}
-            </Link>
+         <NavLink
+  key={link.path}
+  to={link.path}
+  className={({ isActive }) =>
+    `text-base font-medium transition ${
+      isActive ? "text-primary" : "text-muted-foreground"
+    } hover:text-primary`
+  }
+>
+  {link.name}
+</NavLink>
+
           ))}
         </nav>
 
@@ -41,13 +46,18 @@ const Navbar = () => {
             <SheetContent side="left" className="bg-white">
               <div className="mt-6 flex flex-col gap-4">
                 {navLinks.map((link) => (
-                  <Link
-                    key={link.path}
-                    to={link.path}
-                    className="text-base font-medium text-muted-foreground hover:text-primary transition"
-                  >
-                    {link.name}
-                  </Link>
+              <NavLink
+  key={link.path}
+  to={link.path}
+  className={({ isActive }) =>
+    `text-base font-medium transition ${
+      isActive ? "text-primary" : "text-muted-foreground"
+    } hover:text-primary`
+  }
+>
+  {link.name}
+</NavLink>
+
                 ))}
               </div>
             </SheetContent>
