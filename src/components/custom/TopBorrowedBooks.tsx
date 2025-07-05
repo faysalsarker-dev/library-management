@@ -5,8 +5,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { BorrowedBook } from "../types/types";
 
 const TopBorrowedBooks = () => {
-  const { data: topBorrowedBooks, isLoading, isError } = useGetTopBorrowQuery({});
-
+  const { data, isLoading, isError } = useGetTopBorrowQuery({});
+const topBorrowedBooks = data?.data || []
   return (
     <section className="py-10 bg-muted/40">
       <div className="max-w-6xl mx-auto px-4">

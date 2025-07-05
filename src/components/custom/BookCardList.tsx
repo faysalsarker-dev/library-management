@@ -56,9 +56,13 @@ const BookCardList = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
       <h2 className="text-3xl font-bold mb-8 text-primary text-center">
-        📚 Recent Books
+        
       </h2>
-
+ <div className="flex items-center justify-center mb-6">
+        <h2 className="text-3xl font-bold text-center text-primary mb-10 border-b-2 border-accent pb-2">
+           Recent Books
+        </h2>
+ </div>
       {isLoading && (
         <p className="text-center text-muted-foreground">Loading books...</p>
       )}
@@ -175,7 +179,7 @@ const BookCardList = () => {
     </AlertDialogHeader>
     <AlertDialogFooter>
       <AlertDialogCancel>Cancel</AlertDialogCancel>
-      <AlertDialogAction   onClick={() => handleDeleteBook(book._id)}>Continue</AlertDialogAction>
+      <AlertDialogAction onClick={() => book._id && handleDeleteBook(book._id)}>Continue</AlertDialogAction>
     </AlertDialogFooter>
   </AlertDialogContent>
 </AlertDialog>

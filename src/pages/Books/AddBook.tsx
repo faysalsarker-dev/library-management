@@ -5,6 +5,8 @@ import type { IBook } from "@/components/types/types";
 import { useAddBookMutation } from "@/redux/features/api/bookApi";
 import {  useState } from "react";
 import { BookFormDialog } from "@/components/custom";
+import { toast } from 'react-hot-toast';
+import { useNavigate } from "react-router";
 
 
 
@@ -12,12 +14,14 @@ const AddBook = () => {
   const [open, setOpen] = useState(false);
 
   const [addBook, { isLoading }] = useAddBookMutation();
-
+const navigate = useNavigate();
  
 
   const handleAddBook = async (data:IBook) => {
     await addBook(data).unwrap();
     setOpen(false);
+    toast.success("Book added successfully!");
+navigate("/books");
   };
 
   return (

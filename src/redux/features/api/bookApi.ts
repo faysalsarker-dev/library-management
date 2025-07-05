@@ -9,7 +9,7 @@ export const bookApi = createApi({
   tagTypes: ["Book"],
   endpoints: (builder) => ({
     getBooks: builder.query<
-      { data: IBook[]; total: number },{ page?: number; limit?: number; filter?: string }>({
+      { data: IBook[]; totalPages: number },{ page?: number; limit?: number; filter?: string }>({
       query: ({ page = 1, limit = 10, filter = "" } = {}) => {
         const params = new URLSearchParams();
 

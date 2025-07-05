@@ -14,13 +14,12 @@ import { Badge } from "@/components/ui/badge"
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
-import { Eye, Pencil, Trash2, BookOpen, Loader2 } from "lucide-react";
+import { Eye, Pencil, Trash2, BookOpen } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -46,18 +45,18 @@ const BooksPage = () => {
   const [deleteBook] = useDeleteBookMutation();
   const { data, isLoading, isError } = useGetBooksQuery({ page, limit ,filter});
   const books = data?.data || [];
-  const total = data?.total || 0;
-  const totalPages = Math.ceil(total / limit);
+  const totalPages = data?.totalPages || 0;
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
     setSearchParams({ page: String(newPage) });
   };
 
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
       <h1 className="text-3xl font-bold text-primary mb-8 text-center">
-        📚 All Books
+       All Books
       </h1>
 
      
@@ -188,58 +187,62 @@ const BooksPage = () => {
       )}
     </div>
 
-      <div className="mt-6 flex justify-center">
-   <Pagination>
-  <PaginationContent>
-    <PaginationItem>
-      <PaginationPrevious
-        href={`?page=${page - 1}`}
-        onClick={(e) => {
-          e.preventDefault();
-          if (page > 1) handlePageChange(page - 1);
-        }}
-        className={page === 1 ? "pointer-events-none opacity-50" : ""}
-      />
-    </PaginationItem>
-
-    {Array.from({ length: totalPages }).map((_, i) => {
-      const pageNum = i + 1;
-      return (
-        <PaginationItem key={pageNum}>
-          <PaginationLink
-            href={`?page=${pageNum}`}
-            isActive={page === pageNum}
+    
+{totalPages > 1 && (
+  <div className="mt-6 flex justify-center">
+    <Pagination>
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationPrevious
+            href={`?page=${page - 1}`}
             onClick={(e) => {
               e.preventDefault();
-              handlePageChange(pageNum);
+              if (page > 1) handlePageChange(page - 1);
             }}
-          >
-            {pageNum}
-          </PaginationLink>
+            className={page === 1 ? "pointer-events-none opacity-50" : ""}
+          />
         </PaginationItem>
-      );
-    })}
 
-    {totalPages > 5 && (
-      <PaginationItem>
-        <PaginationEllipsis />
-      </PaginationItem>
-    )}
+        {Array.from({ length: totalPages }).map((_, i) => {
+          const pageNum = i + 1;
+          return (
+            <PaginationItem key={pageNum}>
+              <PaginationLink
+                href={`?page=${pageNum}`}
+                isActive={page === pageNum}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePageChange(pageNum);
+                }}
+                className={page === pageNum ? "bg-primary text-white" : ""}
+              >
+                {pageNum}
+              </PaginationLink>
+            </PaginationItem>
+          );
+        })}
 
-    <PaginationItem>
-      <PaginationNext
-        href={`?page=${page + 1}`}
-        onClick={(e) => {
-          e.preventDefault();
-          if (page < totalPages) handlePageChange(page + 1);
-        }}
-        className={page === totalPages ? "pointer-events-none opacity-50" : ""}
-      />
-    </PaginationItem>
-  </PaginationContent>
-</Pagination>
+        <PaginationItem>
+          <PaginationNext
+            href={`?page=${page + 1}`}
+            onClick={(e) => {
+              e.preventDefault();
+              if (page < totalPages) handlePageChange(page + 1);
+            }}
+            className={
+              page === totalPages ? "pointer-events-none opacity-50" : ""
+            }
+          />
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
+  </div>
+)}
 
-      </div>
+
+
+
+      
     </div>
   );
 };

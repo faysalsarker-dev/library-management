@@ -20,7 +20,7 @@ getTopBorrow: builder.query({
 }),
 
     getBorrowSummary: builder.query({
-      query: ({ page = 1, limit = 4 }) => `/borrow?page=${page}&limit=${limit}`,
+      query: ({ page = 1, limit = 10 }) => `/borrow?page=${page}&limit=${limit}`,
       providesTags: ['Borrow'],
     }),
   }),

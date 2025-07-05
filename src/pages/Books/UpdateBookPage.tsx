@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import  { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 import type { IBook, Genre } from "@/components/types/types";
@@ -36,26 +36,38 @@ const UpdateBookPage = () => {
       description: "",
       copies: 1,
       available: true,
+      
     },
   });
+
+
   useEffect(() => {
-    if (book?.data) {
-      form.reset(book?.data);
-    }
-  }, [book?.data, form]);
+  if (book?.data) {
+          form.reset({
+ ...book.data,
+      
+    });
+  }
+}, [book?.data, form]);
+
+
+
 
   const onSubmit = async (data: IBook) => {
     try {
       await updateBook({ id: id!, ...data }).unwrap();
-      navigate("/books"); // Redirect after update
+      navigate("/books"); 
     } catch (err) {
-      // handle error here, e.g. toast notification
       console.error("Update failed", err);
     }
   };
 
-  if (isLoading) return <p className="text-center py-10">Loading book data...</p>;
-  if (isError) return <p className="text-center py-10 text-red-500">Failed to load book data.</p>;
+  if (isLoading || !book?.data) {
+  return <p className="text-center py-10">Loading book data...</p>;
+}
+if (isError) {
+  return <p className="text-center py-10 text-red-500">Failed to load book data.</p>;
+}
 
   return (
     <div className="max-w-xl mx-auto p-6 bg-white rounded-lg shadow-md">
@@ -94,31 +106,37 @@ const UpdateBookPage = () => {
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="genre"
-              rules={{ required: "Genre is required" }}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Genre</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select genre" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {genreOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+ <FormField
+  control={form.control}
+  name="genre"
+  rules={{ required: "Genre is required" }}
+  render={({ field }) => (
+    <FormItem className="w-full">
+      <FormLabel>Genre</FormLabel>
+      <Select
+        value={field.value}
+        onValueChange={field.onChange}
+        defaultValue={field.value}
+      >
+        <FormControl>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select genre" />
+          </SelectTrigger>
+        </FormControl>
+        <SelectContent>
+          {genreOptions.map((genre) => (
+            <SelectItem key={genre.value} value={genre.value}>
+              {genre.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
+
 
             <FormField
               control={form.control}
